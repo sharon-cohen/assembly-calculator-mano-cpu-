@@ -1,0 +1,617 @@
+
+//main
+		STA	FLAG			//	 
+		LDA	ptr_start			//
+		BSA	PRINTF			//  while(FLAG==0)	
+start,		LDA	char_start_num
+		BSA	Putc
+		BSA	GetUnsignedInt		// DO
+		STA	Num			//	Num=GetUnsignedInt
+		LDA	FLAG			//	
+		SZA
+		BUN	END_main		//	if(Num>100)
+		LDA	Num			//    	
+		ADD	check_big			//	
+		SNA
+		BUN	too_big			//	THEN printf ("too big") 
+		LDA	Num			//	           go to while
+		BSA	put_In_range		//
+		BUN	start			//
+too_big,		LDA	ptr_too_big		//	ELSE  go to  put_In_range(Num)
+		BSA	PRINTF			//
+		BUN	start			//OD	
+END_main,	BSA	print_first_screen		//	go to print_first_screen
+		HLT 
+
+//DATA
+
+char_start_num,	HEX	3C
+ptr_Too_big,	HEX	950
+ptr_start,		HEX	300
+check_big	,	DEC	-101
+Minus_ON,	HEX	-1
+Num,		HEX	0
+FLAG,		HEX	0
+Arr_Range,	HEX	200			// pointer to start of Array
+Arr_size,		DEC	10			// size of the array
+		ORG 	200		
+sum1,	 	DEC 	0
+sum2,		DEC 	0
+sum3,	 	DEC 	0		
+sum4,		DEC	0
+sum5,		DEC	0
+sum6,		DEC	0
+sum7,		DEC	0
+sum8,		DEC	0
+sum9,		DEC	0
+sum10,		DEC	0
+		
+		ORG	300
+START_STR,	DEC	80				
+		DEC	108				
+		DEC	101				
+		DEC	97				
+		DEC	115				
+		DEC	101				
+		DEC	32				 
+		DEC	101				
+		DEC	110				
+		DEC	116				
+		DEC	101				
+		DEC	114				
+		DEC	32				
+		DEC	97
+		DEC	32
+		DEC	115
+		DEC	101
+		DEC	114
+		DEC	105
+		DEC	101
+		DEC	115
+		DEC	32
+		DEC	111
+		DEC	102		
+		DEC	32
+		DEC	110
+		DEC	117		
+		DEC	109		
+		DEC	98		
+		DEC	101		
+		DEC	114		
+		DEC	115
+		DEC	10		
+		DEC	33		
+
+
+		ORG	950
+BIG,		DEC	116
+		DEC	111
+		DEC	111
+		DEC	32
+		DEC	98
+		DEC	105
+		DEC	103
+		DEC	32
+		DEC	101				
+		DEC	110				
+		DEC	116				
+		DEC	101				
+		DEC	114				
+		DEC	32
+		DEC	97
+		DEC	32	
+		DEC	110
+		DEC	101
+		DEC	119
+		DEC	32
+		DEC	110	
+		DEC	117
+		DEC	109
+		DEC	10
+		DEC	33
+
+
+GetUnsignedInt,	HEX	0			// short unsigned int GetUnsignedInt()
+		CLA
+		STA	TNum 			// TNum  = 0;
+
+ In_char,		BSA 	Getc			// WHILE (cc = getc()  != �CReturn�) {  		
+		STA	Cc			//	
+		ADD 	minusCReturn		//	
+		SZA				// 		
+		BUN 	checkminus		//
+		BUN	End_loop			//	IF(cc=="-")
+checkminus,   	LDA	Cc			//	{
+		ADD	minus_minus		//
+		SZA				//
+		BUN	check_big_nine
+		LDA	FLAG			//	FLAG=1
+		INC				//	GO TO	while
+		STA	FLAG			//	}
+		BUN	 In_char
+check_big_nine,	LDA	Cc			//	IF(cc>9)
+		ADD	minus_nine		//	{
+		SPA				//
+		BUN	check_less_zero		//	
+		LDA	ptr_error			//	  printf("error enter a new num");
+		BSA	PRINTF			//	  
+		CLA				//
+		STA	TNum 			//  	TNum=0;
+		BUN	 In_char			//	GO TO while
+check_less_zero,	LDA	Cc			//	}
+		ADD	minus_zero		//	IF(cc<0)
+		SNA				//	{
+		BUN	Convert			//		
+		LDA	ptr_error			//	printf("error enter a new num");
+		BSA	PRINTF			//
+		CLA				//	TNum=0;
+		STA	TNum 			//
+		BUN	 In_char			//	GO TO while{
+Convert, 		LDA	Cc			// DO
+		ADD	mASCII_zero 		//           char = char � 30H;
+		STA	Cc			// 
+		LDA	TNum 			// 
+		BSA	MultBy10			//           TNum  = TNum  * 10 + char; 
+		ADD	Cc			//
+		STA	TNum 			//
+		BUN	In_char			// OD;
+End_loop,		LDA	TNum 		
+		BUN	GetUnsignedInt  I 		// return 
+
+// GetUnsignedInt Data
+TNum ,		DEC	 0		// the input short unsigned integer 
+Cc,   		DEC	 0		// 
+ptr_error,		HEX	220
+minus_nine,	DEC	-57
+minus_zero,	DEC	-48
+minus_minus,	 HEX	-2D
+mASCII_zero,	HEX	-30		//
+minusCReturn,	HEX	 -D		// 
+		
+		ORG	220
+ERROR,		DEC	10
+		DEC	101
+		DEC	114
+		DEC	114
+		DEC	111
+		DEC	114
+		DEC	32
+		DEC	101				
+		DEC	110				
+		DEC	116				
+		DEC	101				
+		DEC	114				
+		DEC	32
+		DEC	97
+		DEC	32	
+		DEC	110
+		DEC	101
+		DEC	119
+		DEC	32
+		DEC	110	
+		DEC	117
+		DEC	109
+		DEC	10
+		DEC	33
+//
+MultBy10,	HEX	0		// short int  MultBy10(short int  a) {
+	CLE				// 
+	CIL				// 
+	STA	tmp			//
+	CIL				// 
+	CIL				// 
+	ADD 	tmp			//      a = a * 10; 
+	BUN	MultBy10   I 		//      return a }
+					
+// MultBy10 data
+tmp,	DEC	0
+
+Getc,  	HEX	0		// char Getc()  {
+Inp_char, 	SKI			// 	
+	BUN	Inp_char		//
+	INP			//  input char
+Echo,	SKO			// echo(char) 
+	BUN	Echo		//
+	OUT			// 	
+	BUN	Getc  I		// return char }
+
+putSignedInt, HEX	0		// putSignedInt(short signed int Tnum) {
+	STA	TNum1		//
+
+	LDA	Power10Ptr		//
+	STA	Ptr		// Ptr = @Power10Array
+	LDA	It_count
+	STA	Count		// Count = It_count; i.e. 4 in the case of 16 bits
+	LDA	TNum1 		// IF (TNum  <0)
+	SNA			//
+	BUN	Positive		//
+Negative, 	LDA	TNum 		// THEN 
+	CMA			//        stripped = -TNum ; 
+	INC			//
+	STA	Stripped		//
+	LDA	Sign_ascii		//
+	BSA	Putc		//   	putc(�-�);
+	BUN	ForLoop		// 
+Positive,	LDA	TNum1 		// ELSE stripped = TNum ; 
+	STA	Stripped		// FI 
+//
+ForLoop,	LDA	Count		//     FOR (Count= It_count; Count > 0; Count--) 
+	SPA			//
+	BUN	EndFor		//
+	CLA			//     DO	digit =0; 
+	STA	Digit		//
+Loop,	LDA	ptr  I		// 	WHILE (Stripped - *Ptr  > 0)
+	ADD	Stripped		// 	DO
+	SNA			//
+	BUN 	Continue		//
+	BUN	Outx		//
+Continue,	STA	Stripped		//	        Stripped=Stripped - *Ptr;  
+	ISZ	digit		//	        digit++;
+	BUN	Loop		// 	OD;
+Outx,	LDA	digit		// 
+	ADD	ascii_Offset		//
+	BSA	Putc		//
+	ISZ	ptr  		//	ptr++;
+	LDA	count		//	Count--;
+	ADD	Minus1		//
+	STA	Count		//
+	BUN	ForLoop		//     OD;
+EndFor,	LDA	Stripped		//
+	ADD	ascii_Offset		//
+	BSA	Putc		//  Output(last digit); // print units � the left over in ACC
+End,	BUN	putSignedInt I
+//
+// putignedInt data
+TNum1 ,		DEC 	0	// Temp for output
+digit,		DEC 	0
+Sign_ascii,  	HEX	 2D	// the "-"  character
+ascii_Offset, 	HEX	 30	// digit to ascii representation offset
+Stripped,		DEC	 0	// +ve value of TNum 
+Minus1,		DEC	 -1
+count,		DEC	 0
+It_count ,		DEC	 4	// loop count (for 16 bit integer)
+Power10Ptr, 	HEX  	100	// @Power10Array
+ptr,		HEX	 0	// 
+
+		ORG 	100
+Power10Array, 	 DEC 	-10000	// -10 to power of 4
+		DEC 	-1000	// -10 to power of 3
+		DEC 	-100	// -10 to power of 2
+		DEC	-10	// -10 to power of 1
+
+// Subroutine to print a char to screen
+Putc,	HEX	0	// void Putc(char) {
+Out,	SKO			
+	BUN	Out
+	OUT		//    print(char);
+	BUN 	Putc I	// }
+	
+put_In_range,	HEX	0
+		STA	Local_num		
+		ADD	MINUS10			
+		SNA			
+		BUN	NEXT1
+		LDA	sum1
+		INC
+		STA	sum1	
+		BUN	ENDF
+NEXT1,		LDA	Local_num
+		ADD	MINUS20
+		SNA	
+		BUN	NEXT2
+		LDA	sum2
+		INC
+		STA	sum2
+		BUN	ENDF
+NEXT2,		LDA	Local_num
+		ADD	MINUS30
+		SNA	
+		BUN	NEXT3
+		LDA	sum3
+		INC
+		STA	sum3
+		BUN	ENDF
+NEXT3,		LDA	Local_num
+		ADD	MINUS40
+		SNA	
+		BUN	NEXT4
+		LDA	sum4
+		INC
+		STA	sum4
+		BUN	ENDF
+NEXT4,		LDA	Local_num
+		ADD	MINUS50
+		SNA	
+		BUN	NEXT5
+		LDA	sum5	
+		INC	
+		STA	sum5
+		BUN	ENDF
+NEXT5,		LDA	Local_num
+		ADD	MINUS60
+		SNA	
+		BUN	NEXT6
+		LDA	sum6
+		INC
+		STA	sum6
+		BUN	ENDF
+NEXT6,		LDA	Local_num
+		ADD	MINUS70
+		SNA
+		BUN	NEXT7
+		LDA	sum7
+		INC
+		STA	sum7
+		BUN	ENDF
+NEXT7,		LDA	Local_num
+		ADD	MINUS80
+		SNA	
+		BUN	NEXT8
+		LDA	sum8
+		INC
+		STA	sum8
+		BUN	ENDF
+NEXT8,		LDA	Local_num
+		ADD	MINUS90
+		SNA	
+		BUN	NEXT9
+		LDA	sum9
+		INC
+		STA	sum9
+		BUN	ENDF
+NEXT9,		LDA	sum10
+		INC
+		STA	sum10
+																								
+ENDF,		BUN	put_In_range I
+//DATA
+MINUS10,	HEX	-A	
+MINUS20,	HEX	-14
+MINUS30,	HEX	-1E
+MINUS40,	HEX	-28
+MINUS50,	HEX	-32
+MINUS60,	HEX	-3C
+MINUS70,	HEX	-46
+MINUS80,	HEX	-50
+MINUS90,	HEX	-5A
+Local_num,	HEX	0
+
+
+
+Print__Interval_count,	HEX	0
+			STA	curr_ptr			//	curr_ptr=interval_freq
+			LDA	curr_ptr I			//	Temp_sum=*curr_ptr
+			STA	Temp_sum
+loop2,			LDA	Temp_sum		//	while(Temp_sum!=0)
+			SZA				//	{
+			BUN	Continued		//		GO TO continued
+			LDA	char_sign			//	}
+			BSA	Putc			//	printf("*");
+			BUN	Print__Interval_count  I	//return
+Continued,		LDA	ptr_line			//continued:
+			BSA	PRINTF			//printf("--------");
+			LDA	Temp_sum		//Temp_sum--
+			ADD	minus_one		//
+			STA	Temp_sum		//
+			BUN	loop2
+
+//DATA
+Local_size,	HEX	0
+curr_ptr,		HEX	200
+count_size,	HEX	0
+char_signֹ2,	HEX	7C
+Temp_sum,	HEX	0
+line_down,	HEX	D
+char_sign,		HEX	2A
+minus_one,	HEX	-1
+ptr_line,		HEX	330
+		ORG	330
+LINE,		DEC	45
+		DEC	45
+		DEC	45
+		DEC	45
+		DEC	45
+		DEC	45
+		DEC	45
+		DEC	45
+		DEC	33
+//PRINTF(str)							// void printf(char* str)
+					
+PRINTF,			                 HEX	0			//
+				STA	PTR_LOCAL		//			PRINTF(��/N�)	
+WHILE,			                  LDA	PTR_LOCAL	I	//	WHILE (PTR[i] != '!') 	
+				ADD	END_CHAR		//	{
+				SZA				//
+				BUN	DO			//
+				BUN	END_PRINT		//
+DO,				LDA	PTR_LOCAL	I	//		DO  
+				ISZ	PTR_LOCAL		//			PRINTF(�%C�, PTR[i])
+OUT_LOOP1,			SKO					//			PTR++
+				BUN	OUT_LOOP1		//			
+				OUT				//			GOTO WHILE		
+				BUN	WHILE			//	
+END_PRINT,			BUN 	PRINTF I			//	}
+	
+//PRINTF DATA							//
+PTR_LOCAL,			HEX	0			//	
+END_CHAR,			DEC	-33			//	
+LINE_FEED,		 	DEC	10	
+
+
+print_first_screen,	HEX 	0		
+		LDA	size_of_Interval		//	size_of_Interval=-10	
+		CMA
+		INC
+		STA	size_of_Interval		//
+start_while,	LDA	size_of_Interval		//	while(size_of_Intervalr<0){
+		SNA	
+		BUN	print_sum			//
+		LDA	Interval_strings	I	//	printf("%s",Interval_strings[i])
+		BSA	PRINTF			//
+		LDA	interval_freq 	I	//	go to 	putSignedInt(*interval_freq );
+		BSA	putSignedInt		//
+		LDA	Total_sum_student		//	Total_sum_student=Total_sum_student+*interval_freq ;	
+		ADD	interval_freq 	I	//
+		STA	Total_sum_student		//
+		LDA	interval_freq 		//
+		BSA	Print__Interval_count	//	Print__Interval_count(*interval_freq )	
+		LDA	interval_freq 		//	interval_freq++
+		INC
+		STA	interval_freq 
+		LDA	Interval_strings		//	Interval_strings++
+		INC	
+		STA	Interval_strings		//
+		LDA	size_of_Interval		//	size_of_Interval++
+		INC
+		STA	size_of_Interval		// }
+		BUN	start_while
+print_sum,	LDA	ptr_sum			//	printf("sum")
+		BSA	PRINTF
+		LDA	Total_sum_student		//
+		BSA	putSignedInt		//	putSignedInt(Total_sum_student)
+		BUN	print_first_screen	I	//	
+
+
+///DATA
+ptr_sum,		HEX	900
+Total_sum_student,	HEX	0
+interval_freq ,	HEX	200
+size_of_Interval,	DEC	10
+Interval_strings,	HEX	530			//char Interval_strings [10][6] = {"0-9","10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79" , "80-89","90-100};	
+
+		ORG	530
+RangPtr1,		HEX	400
+RangPtr2,		HEX	450
+RangPtr3,		HEX	500
+RangPtr4,		HEX	550
+RangPtr5,		HEX	600
+RangPtr6,		HEX	650
+RangPtr7,		HEX	700
+RangPtr8,		HEX	750
+RangPtr9,		HEX	800
+RangPtr10,	HEX	850
+		
+		ORG	400
+RANG1,		DEC	73	
+		DEC	110	
+		DEC	116	
+		DEC	101
+		DEC	114
+		DEC	118
+		DEC	97
+		DEC	108
+		DEC	32
+		DEC	70
+		DEC	114
+		DEC	101
+		DEC	113
+		DEC	10
+		DEC	48
+		DEC	45
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	450
+RANG2,		DEC	10
+		DEC	49
+		DEC	48
+		DEC	45
+		DEC	49
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	500
+RANG3,		DEC	10
+		DEC	50
+		DEC	48
+		DEC	45
+		DEC	50
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	550
+RANGE4,		DEC	10
+		DEC	51
+		DEC	48
+		DEC	45
+		DEC	51
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	600
+RANGE5,		DEC	10
+		DEC	52
+		DEC	48
+		DEC	45
+		DEC	52
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	650
+RANGE6,		DEC	10
+		DEC	53
+		DEC	48
+		DEC	45
+		DEC	53
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+
+		ORG	700
+RANGE7,		DEC	10
+		DEC	54
+		DEC	48
+		DEC	45
+		DEC	54
+		DEC	57
+		DEC	32
+		DEC	32	
+		DEC	33
+		ORG	750
+RANGE8,		DEC	10
+		DEC	55
+		DEC	48
+		DEC	45
+		DEC	55
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	800
+RANGE9,		DEC	10
+		DEC	56
+		DEC	48
+		DEC	45
+		DEC	56
+		DEC	57
+		DEC	32
+		DEC	32
+		DEC	33
+		ORG	850
+RANGE10,	DEC	10
+		DEC	57
+		DEC	48
+		DEC	45
+		DEC	49
+		DEC	48
+		DEC	48
+		DEC	32
+		DEC	33
+		ORG	900
+SUM,		DEC	10
+		DEC	115
+		DEC	117
+		DEC	109
+		DEC	32
+		DEC	32
+		DEC	32
+		DEC	10
+		DEC	33
